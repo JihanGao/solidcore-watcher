@@ -1,9 +1,14 @@
 import "dotenv/config";
 
+import os from "node:os";
 import path from "node:path";
 
 const rootDir = process.cwd();
 const localDir = path.join(rootDir, ".local", "solidcore");
+const sharedDir =
+  process.platform === "darwin"
+    ? path.join(os.homedir(), "Library", "Application Support", "solidcore-watcher-shared")
+    : localDir;
 
 function parseNumber(value: string | undefined, fallback: number): number {
   const parsed = Number(value);
@@ -49,6 +54,7 @@ export const solidcoreConfig = {
   pushoverAuthSound: process.env.PUSHOVER_AUTH_SOUND || "falling",
   storageStatePath: path.join(localDir, "storage-state.json"),
   stateFilePath: path.join(localDir, "state.json"),
+  notificationStatePath: path.join(sharedDir, "notification-state.json"),
   debugDir: path.join(localDir, "debug"),
   logsDir: path.join(localDir, "logs"),
 };

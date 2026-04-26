@@ -3,7 +3,7 @@ import { createSolidcoreContext } from "./browser";
 import { getTargetMonthInfo, isExpectedReleaseWindow } from "./dates";
 import { analyzeSchedulePage } from "./page-analysis";
 import { sendPushoverNotification } from "./notify";
-import { readSolidcoreState, writeSolidcoreState } from "./state";
+import { readNotificationState, readSolidcoreState, writeNotificationState, writeSolidcoreState } from "./state";
 import { applyStudioFilters } from "./studios";
 import { writeJsonFile, writeTextFile } from "./fs";
 
@@ -62,7 +62,10 @@ async function main(): Promise<void> {
       result.matchedDays.length >= solidcoreConfig.requiredDateMatches ||
       result.inspectedTargetMonthDays.some((inspection) => inspection.available);
     const state = await readSolidcoreState();
-    const alreadyNotified = state.lastNotifiedTargetMonth === targetMonth.key;
+    const notificationState = await readNotificationState();
+    const notificationWindowOpen = isExpectedReleaseWindow(solidcoreConfig.expectedReleaseDays);
+    const alreadyNotified =
+      state.lastNotifiedTargetMonth === targetMonth.key || notificationState.lastNotifiedTargetMonth === targetMonth.key;
     const authAlertDue = shouldSendAuthAlert(state.lastAuthAlertAt);
 
     await writeTextFile(`${solidcoreConfig.debugDir}/latest-page-text.txt`, result.pageText);
@@ -91,7 +94,8 @@ async function main(): Promise<void> {
         sessionInvalid,
         targetMonth: targetMonth.key,
       },
-      lastNotifiedTargetMonth: alreadyNotified || !releaseDetected ? state.lastNotifiedTargetMonth : targetMonth.key,
+      lastNotifiedTargetMonth:
+        alreadyNotified || !releaseDetected || !notificationWindowOpen ? state.lastNotifiedTargetMonth : targetMonth.key,
     });
 
     if (sessionInvalid) {
@@ -128,6 +132,13 @@ async function main(): Promise<void> {
       return;
     }
 
+    if (!notificationWindowOpen) {
+      console.log(
+        `Release detected, but push notifications are limited to release-window days: ${solidcoreConfig.expectedReleaseDays.join(", ")}.`,
+      );
+      return;
+    }
+
     await sendPushoverNotification({
       title: buildReleaseTitle(),
       message: buildReleaseMessage(targetMonth.monthNameLong, targetMonth.year, result.matchedDays),
@@ -135,6 +146,10 @@ async function main(): Promise<void> {
       sound: solidcoreConfig.pushoverReleaseSound,
       url: scheduleUrl,
       urlTitle: "Open solidcore schedule",
+    });
+
+    await writeNotificationState({
+      lastNotifiedTargetMonth: targetMonth.key,
     });
 
     console.log("Pushover alert sent.");

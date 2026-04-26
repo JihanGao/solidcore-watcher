@@ -10,6 +10,7 @@ It logs into your member account once, saves the browser session locally, checks
 - Pushover test notifications
 - Three-studio filtering support
 - Release detection using both visible date text and direct checks of next-month day buttons
+- One combined release push per target month across all selected studios
 - Session-expiry reminders if `solidcore` asks you to log in again
 - Optional macOS `launchd` installer for overnight background checks
 
@@ -79,6 +80,7 @@ npm run uninstall:launchd
 ```
 
 The launch agent checks every 5 minutes from `00:00` through `05:55` local time. The watcher itself only alerts on configured release days, defaulting to the `23rd` and `24th`.
+Manual `npm run check` runs and background `launchd` runs share the same notification lock, so once a target month has triggered a release alert, it will not alert again for that month.
 
 ## Useful files
 
