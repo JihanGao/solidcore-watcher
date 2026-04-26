@@ -1,0 +1,24 @@
+{
+  "name": "solidcore-watcher",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local solidcore release watcher with Pushover alerts",
+  "scripts": {
+    "login": "node --import tsx ./scripts/login.ts",
+    "check": "node --import tsx ./scripts/check.ts",
+    "test-notify": "node --import tsx ./scripts/test-notify.ts",
+    "watch": "node --import tsx ./scripts/watch.ts",
+    "install:launchd": "node --import tsx ./scripts/install-launch-agent.ts",
+    "uninstall:launchd": "node --import tsx ./scripts/uninstall-launch-agent.ts",
+    "status:launchd": "node --import tsx ./scripts/status-launch-agent.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "playwright": "^1.59.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}
