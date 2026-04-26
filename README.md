@@ -59,6 +59,12 @@ npm run login
 npm run check
 ```
 
+7. If you want to re-test the same month alert from scratch, clear the notification lock first:
+
+```bash
+npm run reset-notification-state
+```
+
 ## macOS auto-run
 
 Install the background job:
@@ -85,10 +91,15 @@ Manual `npm run check` runs and background `launchd` runs share the same notific
 ## Useful files
 
 - Local state: `.local/solidcore/state.json`
+- Shared notification lock: `~/Library/Application Support/solidcore-watcher-shared/notification-state.json`
 - Latest result: `.local/solidcore/debug/latest-result.json`
 - Latest page text: `.local/solidcore/debug/latest-page-text.txt`
 - Latest screenshot: `.local/solidcore/debug/latest-schedule.png`
 - Background logs: `.local/solidcore/logs/`
+
+## Resetting alerts
+
+Use `npm run reset-notification-state` only when you intentionally want to test the same target month again. In normal use, you should leave the notification lock alone so the watcher only pushes once per month.
 
 ## Privacy
 

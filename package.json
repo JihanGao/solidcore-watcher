@@ -7,6 +7,7 @@
     "login": "node --import tsx ./scripts/login.ts",
     "check": "node --import tsx ./scripts/check.ts",
     "test-notify": "node --import tsx ./scripts/test-notify.ts",
+    "reset-notification-state": "node --import tsx ./scripts/reset-notification-state.ts",
     "watch": "node --import tsx ./scripts/watch.ts",
     "install:launchd": "node --import tsx ./scripts/install-launch-agent.ts",
     "uninstall:launchd": "node --import tsx ./scripts/uninstall-launch-agent.ts",
